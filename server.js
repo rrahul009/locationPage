@@ -6,7 +6,7 @@ const {v4:uuidv4}=require("uuid")
 const path = require("path");
 const fileupload=require("express-fileupload")
 const app = express();
-
+const fs = require('fs');
 let port = 5000||process.env.PORT;
 app.use(express.static(path.join(__dirname, './locationpage/build')));
 app.use(fileupload());
@@ -27,6 +27,7 @@ app.post("/upload", (req, res) => {
       if (err) {
         res.status(500).send({ message: "File upload failed", code: 200 });
       }
+      
 
       res.status(200).send({ message: "File Uploaded", code: 200 , fileID:filename});
     });
@@ -45,7 +46,24 @@ app.get("/download",  (req, res)=> {
       }
     });
   });
+  app.get("/delete",(req,res)=>{
+    const imageID=req.query.id
+    fs.unlink(__dirname+"/uploads/" + imageID, (err) => {
+        if (err) {
+            throw err;
+        }
+    
+        res.send("deleted")
+    });
+  })
+  app.post("/save",(req,res)=>{
+    console.log("we will send these ids and user info to database : " + req.body)
+    res.send("document saved successfully")
+  })
 
 app.listen(port,()=>{
     console.log("app is listening on" + port + " port")
-    })
+    })         
+       
+          
+             
